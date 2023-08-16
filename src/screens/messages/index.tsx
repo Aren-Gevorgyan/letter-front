@@ -6,7 +6,6 @@ import { useContext, useEffect, useState } from "react";
 import io from "socket.io-client";
 
 const Messenger = () => {
-  // const [socket, setSocket] = useState<any>(null);
   const [messages, setMessages] = useState<any>([]);
   const [messageInput, setMessageInput] = useState("");
   const socket = useContext(WebSocketContext);
