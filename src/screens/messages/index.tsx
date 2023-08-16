@@ -4,7 +4,6 @@ import { WebSocketContext } from '@/common/webSocket';
 import { useContext, useEffect, useState } from 'react';
 
 const Messenger = () => {
-	// const [socket, setSocket] = useState<any>(null);
 	const [messages, setMessages] = useState<any>([]);
 	const [messageInput, setMessageInput] = useState('');
 	const socket = useContext(WebSocketContext);
@@ -21,6 +20,8 @@ const Messenger = () => {
 		return () => {
 			console.log('Disconnect');
 			socket.disconnect();
+			socket.off('connect');
+			socket.off('onMessage');
 		};
 	}, [socket]);
 
