@@ -1,7 +1,7 @@
-import Registration from '@/screens/registration';
+import SignIn from '@/screens/signIn';
 import { GetStaticProps } from 'next';
 
-export default Registration;
+export default SignIn;
 
 export const getStaticProps: GetStaticProps = () => ({
 	props: {},

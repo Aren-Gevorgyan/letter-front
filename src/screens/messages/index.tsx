@@ -1,15 +1,17 @@
 // components/Messenger.js
 
-import { WebSocketContext } from '@/common/webSocket';
-import { useContext, useEffect, useState } from 'react';
+import { connectTOSocket } from '@/common/webSocket';
+import { useEffect, useState } from 'react';
+import { Cookie } from 'universal-cookie';
 
-const Messenger = () => {
+const Messenger = ({ cookie }: { cookie: Cookie }) => {
 	const [messages, setMessages] = useState<any>([]);
 	const [messageInput, setMessageInput] = useState('');
-	const socket = useContext(WebSocketContext);
+	const socket = connectTOSocket(cookie);
 
 	useEffect(() => {
 		socket.on('connect', () => {
+			// eslint-disable-next-line no-console
 			console.log('connected to Socket io');
 		});
 
@@ -18,10 +20,9 @@ const Messenger = () => {
 		});
 
 		return () => {
+			// eslint-disable-next-line no-console
 			console.log('Disconnect');
 			socket.disconnect();
-			socket.off('connect');
-			socket.off('onMessage');
 		};
 	}, [socket]);
 

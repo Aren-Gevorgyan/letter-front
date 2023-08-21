@@ -1,7 +1,16 @@
-import { createContext } from 'react';
-import { io, Socket } from 'socket.io-client';
+import { io } from 'socket.io-client';
+import { getHeader } from './auth';
+import { Cookie } from 'universal-cookie';
 
-const serverUrl = process.env.NEXT_PUBLIC_SERVER_URL;
-export const socket = io(`${serverUrl}`);
-export const WebSocketContext = createContext<Socket>(socket);
-export const WebSocketProvider = WebSocketContext.Provider;
+export const connectTOSocket = (cookie?: Cookie) => {
+	const { header } = getHeader(cookie);
+
+	const serverUrl = process.env.NEXT_PUBLIC_SERVER_URL;
+	const socket = io(`${serverUrl}`, {
+		extraHeaders: {
+			Authorization: header.Authorization,
+		},
+	});
+
+	return socket;
+};
