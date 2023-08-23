@@ -1,4 +1,8 @@
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
+import {
+	createUserWithEmailAndPassword,
+	sendEmailVerification,
+	signInWithEmailAndPassword,
+} from 'firebase/auth';
 import auth from './firebaseInit';
 import Cookies from 'universal-cookie';
 import Router from 'next/router';
@@ -11,7 +15,7 @@ type SetTokenOptions = {
 };
 const cookies = new Cookies();
 const JWT_NAME = 'firebase-jwt';
-const url = `${process.env.NEXT_PUBLIC_HOSTNAME}sign-in` || '';
+const url = `${process.env.NEXT_PUBLIC_HOSTNAME}/sign-in` || '';
 export const getToken = (): string => cookies.get(JWT_NAME);
 const setToken = (token: string | undefined, options: SetTokenOptions): void =>
 	cookies.set(JWT_NAME, token, options);
@@ -54,10 +58,14 @@ export const getHeader = (
 
 export const registration = async (email: string, password: string) => {
 	try {
-		const user = await createUserWithEmailAndPassword(auth, email, password);
-		console.log('🚀 ~ file: auth.ts:7 ~ registration ~ user:', user);
+		await createUserWithEmailAndPassword(auth, email, password);
+		auth.currentUser && sendEmailVerification(auth.currentUser, { url });
+		Router.push('/sign-in');
 	} catch (error: any) {
-		console.log(error.message);
+		notification.open({
+			message: 'Error',
+			description: Errors[error.message] || DefaultError,
+		});
 	}
 };
 
@@ -72,10 +80,15 @@ export const signIn = async (email: string, password: string): Promise<any> => {
 		Router.push('messages/5');
 		return data.user;
 	} catch (error: any) {
-		console.log('🚀 ~ file: auth.ts:75 ~ signIn ~ error:', error.message);
 		notification.open({
 			message: 'Error',
 			description: Errors[error.message] || DefaultError,
 		});
 	}
+};
+
+export const signOut = async (): Promise<void> => {
+	await auth.signOut();
+	deleteToken();
+	Router.push('/sign-in');
 };
