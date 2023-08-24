@@ -21,7 +21,7 @@ const withCSR =
 		return {
 			redirect: {
 				permanent: false,
-				destination: '/signIn',
+				destination: '/sign-in',
 			},
 		};
 	};
