@@ -1,52 +1,27 @@
 // components/Messenger.js
 
-import { connectTOSocket } from '@/common/webSocket';
-import { useEffect, useState } from 'react';
+import { signOut } from '@/common/auth';
+import useSocket from '@/hooks/useSocket';
+import { Button } from 'antd';
 import { Cookie } from 'universal-cookie';
+import styles from './styles.module.scss';
 
 const Messenger = ({ cookie }: { cookie: Cookie }) => {
-	const [messages, setMessages] = useState<any>([]);
-	const [messageInput, setMessageInput] = useState('');
-	const socket = connectTOSocket(cookie);
-
-	useEffect(() => {
-		socket.on('connect', () => {
-			// eslint-disable-next-line no-console
-			console.log('connected to Socket io');
-		});
-
-		socket.on('message', (data) => {
-			setMessages((prevMessages: any) => [...prevMessages, data]);
-		});
-
-		return () => {
-			// eslint-disable-next-line no-console
-			console.log('Disconnect');
-			socket.disconnect();
-		};
-	}, [socket]);
-
-	const handleSendMessage = () => {
-		const newMessage = messageInput.trim();
-		if (newMessage && socket) {
-			socket.emit('newMessage', newMessage);
-			setMessageInput('');
-		}
-	};
-
-	const onChange = (e: any) => {
-		setMessageInput(e.target.value);
-	};
+	const { messages, messageInput, error, handleSendMessage, onChange } = useSocket(cookie);
 
 	return (
 		<div>
+			<Button onClick={signOut}>Log out</Button>
 			<div>
 				{messages.map((message: any, index: number) => (
 					<div key={index}>{message}</div>
 				))}
 			</div>
 			<input type="text" value={messageInput} onChange={onChange} />
-			<button onClick={handleSendMessage}>Send</button>
+			{error && <p className={styles.error}>{error}</p>}
+			<button disabled={!!error} onClick={handleSendMessage}>
+				Send
+			</button>
 		</div>
 	);
 };
