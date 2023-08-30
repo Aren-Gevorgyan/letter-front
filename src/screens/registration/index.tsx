@@ -1,67 +1,24 @@
 import React, { FC } from 'react';
-import { Button, Checkbox, Form, Input } from 'antd';
 import styles from './styles.module.scss';
-import { rulesEmail } from './rules';
+import LoginWhiteGoogle from '@/components/loginWhiteGoogle';
+import LoginWhitPhone from '@/components/loginWhitPhone';
+import LoginWhitEmailAndPass from '@/components/loginWhitEmailAndPass';
 import { registration } from '@/common/auth';
 
-type FieldType = {
-	email?: string;
-	password?: string;
-	remember?: string;
-};
-
 const Registration: FC = () => {
-	const onFinish = (values: any) => {
-		console.log('Success:', values);
-		registration(values.email, values.password);
-	};
-
-	const onFinishFailed = (errorInfo: any) => {
-		console.log('Failed:', errorInfo);
-	};
-
 	return (
-		<Form
-			name="basic"
-			labelCol={{ span: 0 }}
-			wrapperCol={{ span: 4 }}
-			initialValues={{ remember: true }}
-			onFinish={onFinish}
-			onFinishFailed={onFinishFailed}
-			autoComplete="off"
-		>
-			<Form.Item<FieldType>
-				label="Email"
-				name="email"
-				className={styles.email}
-				rules={rulesEmail}
-			>
-				<Input />
-			</Form.Item>
-
-			<Form.Item<FieldType>
-				label="Password"
-				name="password"
-				className={styles.password}
-				rules={[{ required: true, message: 'Please input your password!' }]}
-			>
-				<Input.Password />
-			</Form.Item>
-
-			<Form.Item<FieldType>
-				name="remember"
-				valuePropName="checked"
-				wrapperCol={{ offset: 0 }}
-			>
-				<Checkbox>Remember me</Checkbox>
-			</Form.Item>
-
-			<Form.Item wrapperCol={{ offset: 0 }}>
-				<Button type="primary" htmlType="submit">
-					Registration
-				</Button>
-			</Form.Item>
-		</Form>
+		<div className={styles.container}>
+			<div className={styles.content}>
+				<LoginWhiteGoogle />
+				<LoginWhitPhone />
+				<LoginWhitEmailAndPass
+					submitButtonText="Registration"
+					redirectText="Sign in"
+					redirectUrl="/sign-in"
+					callBack={registration}
+				/>
+			</div>
+		</div>
 	);
 };
 

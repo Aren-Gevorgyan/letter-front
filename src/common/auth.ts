@@ -1,7 +1,14 @@
+/* eslint-disable no-console */
 import {
+	GoogleAuthProvider,
+	RecaptchaVerifier,
 	createUserWithEmailAndPassword,
 	sendEmailVerification,
+	sendPasswordResetEmail,
 	signInWithEmailAndPassword,
+	signInWithPhoneNumber,
+	signInWithPopup,
+	updatePassword,
 } from 'firebase/auth';
 import auth from './firebaseInit';
 import Cookies from 'universal-cookie';
@@ -77,7 +84,7 @@ export const signIn = async (email: string, password: string): Promise<any> => {
 			await auth.signOut();
 			throw Error('Please verify email');
 		}
-		Router.push('messages/5');
+		Router.push('/message/5');
 		return data.user;
 	} catch (error: any) {
 		notification.open({
@@ -87,8 +94,65 @@ export const signIn = async (email: string, password: string): Promise<any> => {
 	}
 };
 
+export const registerWithPhoneNumber = async (phoneNumber: string) => {
+	try {
+		const recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
+			size: 'visible',
+			callback: (response: string) => {
+				// This will be called after reCAPTCHA verification is successful
+				setTokenCookie(response);
+			},
+		});
+
+		const confirmationResult = await signInWithPhoneNumber(
+			auth,
+			phoneNumber,
+			recaptchaVerifier,
+		);
+
+		// Prompt the user to enter the verification code
+		const verificationCode = window.prompt('Enter verification code:') || '';
+		const userCredential = await confirmationResult.confirm(verificationCode);
+
+		// User is registered
+		const user: any = userCredential.user;
+		setTokenCookie(user.accessToken);
+		Router.push('/message/5');
+		console.log('User registered with phone number:', user);
+	} catch (error: any) {
+		console.error('Error during phone number registration:', error.message);
+		notification.open({
+			message: 'Error',
+			description: Errors[error.message] || DefaultError,
+		});
+	}
+};
+
+export const authByGoogle = async (): Promise<void> => {
+	try {
+		const provider = new GoogleAuthProvider();
+		const result = await signInWithPopup(auth, provider);
+		const user = result.user;
+		setTokenCookie((user as any).accessToken);
+		Router.push('/message/5');
+	} catch (error) {
+		console.log('Login by Google: ', error);
+	}
+};
+
 export const signOut = async (): Promise<void> => {
 	await auth.signOut();
 	deleteToken();
 	Router.push('/sign-in');
+};
+
+export const resetCurrentPassword = async (email: string): Promise<void> => {
+	await sendPasswordResetEmail(auth, email, { url });
+};
+
+export const changePassword = async (newPassword: string): Promise<void> => {
+	const user = auth.currentUser;
+	if (user) {
+		await updatePassword(user, newPassword);
+	}
 };
