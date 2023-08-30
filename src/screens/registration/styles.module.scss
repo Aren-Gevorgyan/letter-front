@@ -1,5 +1,20 @@
-.email, .password {
-  label {
-    width: 100px;
-  }
+@import '../../app/styles/common.scss';
+
+.container {
+	height: 100vh;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	.content {
+		width: 500px;
+		height: 500px;
+		box-shadow:
+			10px 0px 39px 0px rgba(43, 82, 96, 0.07),
+			0px 16px 39px 0px rgba(43, 82, 96, 0.07);
+		border-radius: 6px;
+		display: flex;
+		justify-content: center;
+		flex-direction: column;
+		padding: 50px;
+	}
 }

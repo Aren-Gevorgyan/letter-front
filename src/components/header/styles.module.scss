@@ -1,0 +1,10 @@
+@import '../../app/styles/common.scss';
+
+header {
+	height: 40px;
+	background-color: $black;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 10px 20px;
+}
