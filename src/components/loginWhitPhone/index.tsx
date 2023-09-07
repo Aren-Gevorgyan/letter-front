@@ -10,7 +10,7 @@ type FieldType = {
 	phone?: string;
 };
 
-const WhitPhone: FC = () => {
+const LoginWhitPhone: FC = () => {
 	const { state: showPhoneInput, setTrue, setFalse } = useBoolean();
 
 	const onFinish = async ({ phone }: { phone: string }) => {
@@ -60,4 +60,4 @@ const WhitPhone: FC = () => {
 	);
 };
 
-export default memo(WhitPhone);
+export default memo(LoginWhitPhone);
