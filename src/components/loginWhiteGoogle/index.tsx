@@ -1,7 +1,7 @@
 import { Button } from 'antd';
 import React from 'react';
 import { memo } from 'react';
-import GoogleIcon from '../../app/icons/googleIcon';
+import GoogleIcon from '../../app/icons/GoogleIcon';
 import styles from './styles.module.scss';
 import { authByGoogle } from '@/common/auth';
 
